@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>🔐 Quà tặng bí mật</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #000;
+      color: white;
+      overflow: hidden;
+    }
+
+    .center-box {
+      position: absolute;
+      top: 40%;
+      width: 100%;
+      text-align: center;
+      z-index: 10;
+    }
+
+    input, button {
+      padding: 10px 20px;
+      font-size: 1.1em;
+      border-radius: 5px;
+      border: none;
+      margin-top: 10px;
+    }
+
+    .chuc {
+      position: absolute;
+      top: 40%;
+      width: 100%;
+      text-align: center;
+      font-size: 1.6em;
+      color: #fff;
+      animation: fadeIn 2s ease-in-out;
+      z-index: 100;
+    }
+
+    @keyframes fadeIn {
+      0% {opacity: 0;}
+      100% {opacity: 1;}
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="canvas" style="display: none;"></canvas>
+
+<div class="center-box" id="unlockBox">
+  <h2>🔒 Nhập mật mã để mở phần thưởng</h2>
+  <input type="password" id="password" placeholder="Mật mã bí mật...">
+  <br>
+  <button onclick="kiemTra()">MỞ QUÀ</button>
+  <p id="thongBao" style="color: red;"></p>
+</div>
+
+<div class="chuc" id="loiChuc" style="display: none;"></div>
+
+<script>
+  const MAT_KHAU_DUNG = "mycay123";  // 👈 Thay đổi mật mã ở đây nếu bạn muốn
+  const loiChucList = [
+    "🍜 Chúc mày ăn mì cay cấp độ 7 mà không rơi một giọt lệ!",
+    "🍢 Xiên bẩn là đỉnh cao, cũng như tình bạn tụi mình!",
+    "🍋 Một ly trà chanh, một tình bạn chanh sả kéo dài mãi mãi!",
+    "🔥 Tình bạn của tụi mình nóng như nồi lẩu xiên cay nồng!",
+    "🎉 Mật mã đúng rồi! Đây là phần thưởng dành cho bạn thân cực phẩm!"
+  ];
+
+  function kiemTra() {
+    const pass = document.getElementById("password").value;
+    if (pass === MAT_KHAU_DUNG) {
+      document.getElementById("unlockBox").style.display = "none";
+      document.getElementById("canvas").style.display = "block";
+      document.getElementById("loiChuc").style.display = "block";
+      document.getElementById("loiChuc").innerText = loiChucList[Math.floor(Math.random() * loiChucList.length)];
+      startFireworks();
+    } else {
+      document.getElementById("thongBao").innerText = "Sai mật mã rồi bạn iuuu 😢";
+    }
+  }
+
+  // Hiệu ứng pháo hoa
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const particles = [];
+
+  class Particle {
+    constructor(x, y, color, vx, vy) {
+      this.x = x;
+      this.y = y;
+      this.color = color;
+      this.vx = vx;
+      this.vy = vy;
+      this.alpha = 1;
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.alpha -= 0.01;
+    }
+
+    draw() {
+      ctx.globalAlpha = this.alpha;
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function firework() {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height / 2;
+    const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff', '#fff'];
+
+    for (let i = 0; i < 50; i++) {
+      const angle = Math.random() * 2 * Math.PI;
+      const speed = Math.random() * 4;
+      const vx = Math.cos(angle) * speed;
+      const vy = Math.sin(angle) * speed;
+      particles.push(new Particle(x, y, colors[Math.floor(Math.random() * colors.length)], vx, vy));
+    }
+  }
+
+  function animate() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach((p, i) => {
+      p.update();
+      p.draw();
+      if (p.alpha <= 0) particles.splice(i, 1);
+    });
+
+    requestAnimationFrame(animate);
+  }
+
+  function startFireworks() {
+    setInterval(firework, 1000);
+    animate();
+  }
+</script>
+
+</body>
+</html>
